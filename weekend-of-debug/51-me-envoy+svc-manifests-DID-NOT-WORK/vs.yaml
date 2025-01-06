@@ -1,0 +1,21 @@
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: project-grpc-virtualservice
+  namespace: opr-develop
+spec:
+  hosts:
+  - "unity-project-service.kapistiogroup.com"
+  gateways:
+  - istio-system/mimeo-gateway
+  http:
+  - match:
+    - port: 443
+      uri:
+        prefix: "/"
+    route:
+    - destination:
+        host: envoy-proxy.opr-develop.svc.cluster.local
+        port:
+          number: 8080

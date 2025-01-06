@@ -1,0 +1,11 @@
+apiVersion: kpt.dev/v1alpha1
+kind: Kptfile
+metadata:
+  name: chart
+upstream:
+  type: git
+  git:
+    commit: baa9134c562eff25e437dfb5dfe2c6e03d1ff470
+    repo: https://github.com/slamdev/helm-charts
+    directory: charts/envoy
+    ref: baa9134c562eff25e437dfb5dfe2c6e03d1ff470

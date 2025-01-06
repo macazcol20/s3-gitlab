@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "envoy.fullname" . }}-test-connection"
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "envoy.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+    "helm.sh/hook-weight": "5"
+spec:
+{{- with .Values.imagePullSecrets }}
+  imagePullSecrets:
+    {{- toYaml . | nindent 8 }}
+{{- end }}
+  containers:
+    - name: curl
+      image: registry1.dso.mil/ironbank/redhat/ubi/ubi8-minimal
+      imagePullPolicy: IfNotPresent
+      command: 
+        - /bin/bash
+        - -ec
+        - |
+          sleep 6000
+        # sleep 10 && curl -vkL --resolve backend.dev.cyber.dsop.io:24000:10.42.2.223 https://backend.dev.cyber.dsop.io:24000
+        # - '--resolve'
+        # - 'backend.bigbang.dev:24000:test-envoy.test.svc.cluster.local'
+        # - '-vkL'
+        # - 'https://backend.{{ .Values.hostname }}:{{ .Values.containerPort }}'
+  restartPolicy: Never

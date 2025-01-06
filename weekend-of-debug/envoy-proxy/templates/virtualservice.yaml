@@ -1,0 +1,76 @@
+## Added to upstream chart to support istio integration
+{{- define "check-if-there-are-tcp-ports" -}}
+    {{- $allports := index . 0 -}}
+    {{- range $i, $port := $allports -}}
+        {{- if eq $port.protocol "TCP" -}}
+            {{- nindent 1 $port.name -}}: {{ default "literally-anything" $port.protocol -}}
+        {{- end -}}
+    {{- end -}}
+{{- end -}}
+
+{{- define "check-if-there-are-http-ports" -}}
+    {{- $allports := index . 0 -}}
+    {{- range $i, $port := $allports -}}
+        {{- if eq $port.protocol "HTTP" -}}
+            {{- nindent 1 $port.name -}}: {{ default "literally-anything" $port.protocol -}}
+        {{- end -}}
+    {{- end -}}
+{{- end -}}
+
+{{- if and .Values.istio.enabled .Values.istio.envoy.enabled }}
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: {{ include "envoy.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  {{- if .Values.istio.envoy.labels }}
+  labels:
+  {{ toYaml .Values.istio.envoy.labels | indent 2 }}
+  {{- end }}
+  {{- if .Values.istio.envoy.annotations }}
+  annotations:
+  {{ toYaml .Values.istio.envoy.annotations | indent 2 }}
+  {{- end }}
+
+spec:
+  {{- range .Values.istio.envoy.gateways }}
+  gateways:
+    - {{ . }}
+  {{- end }}
+  hosts:
+  {{- range .Values.istio.envoy.hosts }}
+    - {{ tpl . $ }}
+  {{- end }}
+  {{ $tcp := include "check-if-there-are-tcp-ports" (list .Values.service.ports ) }}
+  {{- if gt (len $tcp) 0 -}}
+  tls:
+  {{- end }}
+  {{- range .Values.service.ports }}
+  {{- if eq .protocol "TCP"}}
+    - match:
+      - port: {{ .containerPort }}
+        sniHosts:
+        {{- range $.Values.istio.envoy.hosts }}
+        - {{ tpl . $ }}
+        {{- end }}
+      route:
+        - destination:
+            port:
+              number: {{ .containerPort }}
+            host: {{ include "envoy.fullname" $ }}
+  {{- end }}
+  {{- end }}
+  {{ $http := include "check-if-there-are-http-ports" (list .Values.service.ports ) }}
+  {{- if gt (len $http) 0 -}}
+  http:
+  {{- end }}
+  {{- range .Values.service.ports}}
+  {{- if eq .protocol "HTTP" }}
+    - route:
+        - destination:
+            port:
+              number: {{ .containerPort }}
+            host: {{ include "envoy.fullname" $ }}
+  {{- end }}
+  {{- end }}
+{{- end }}

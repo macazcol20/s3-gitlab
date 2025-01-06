@@ -1,0 +1,33 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ include "envoy.fullname" . }}-test-backend"
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: nginx-test
+    {{- include "envoy.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook-weight": "-1"
+    "helm.sh/hook": test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-test
+  template:
+    metadata:
+      labels:
+        app: nginx-test
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      containers:
+        - name: nginx
+          image: registry1.dso.mil/ironbank/opensource/nginx/nginx
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8080

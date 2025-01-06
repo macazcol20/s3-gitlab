@@ -1,0 +1,74 @@
+admin:
+  access_log_path: /tmp/admin_access.log
+  address:
+    socket_address: { address: 0.0.0.0, port_value: 9901 }
+
+static_resources:
+  listeners:
+    - name: listener_0
+      address:
+        socket_address: { address: 0.0.0.0, port_value: 443 }  # Change port to 443 for HTTPS
+      filter_chains:
+        - filters:
+            - name: envoy.http_connection_manager
+              config:
+                codec_type: auto
+                stat_prefix: ingress_https  # Changed for HTTPS
+                route_config:
+                  name: local_route
+                  virtual_hosts:
+                    - name: local_service
+                      domains:
+                        - "your-dns-name.com"  # Change to your DNS name
+                      routes:
+                        - match: { prefix: "/" }
+                          route:
+                            cluster: reflect-project
+                            max_grpc_timeout: 0s
+                      cors:
+                        allow_origin_string_match:
+                        - safe_regex:
+                            google_re2: {}
+                            regex: \*
+                        allow_methods: GET, PUT, DELETE, POST, OPTIONS
+                        allow_headers: authorization,x-grpc-web,grpc-timeout,keep-alive,user-agent,cache-control,content-type,content-transfer-encoding,x-accept-content-transfer-encoding,x-accept-response-streaming,x-user-agent,x-reflect-appid
+                        max_age: "1728000"
+                        expose_headers: grpc-status,grpc-message
+                http_filters:
+                  - name: envoy.grpc_web
+                  - name: envoy.cors
+                  - name: envoy.router
+      # Add SSL context here
+      filter_chains:
+        - filters:
+            - name: envoy.http_connection_manager
+              config:
+                codec_type: auto
+                stat_prefix: ingress_https
+                route_config:
+                  name: local_route
+                  virtual_hosts:
+                    - name: local_service
+                      domains:
+                        - "your-dns-name.com"  # Adjust this
+                  http_filters:
+                    - name: envoy.grpc_web
+                    - name: envoy.cors
+                    - name: envoy.router
+        # SSL configuration
+        tls_context:
+          common_tls_context:
+            tls_params:
+              tls_minimum_protocol_version: TLSv1_2  # Ensure secure TLS version
+            tls_certificates:
+              - certificate_chain: { filename: "/etc/envoy/certs/cert.pem" }
+                private_key: { filename: "/etc/envoy/certs/key.pem" }
+
+  clusters:
+    - name: reflect-project
+      connect_timeout: 0.25s
+      type: logical_dns
+      http2_protocol_options: {}
+      lb_policy: round_robin
+      hosts:
+        - { socket_address: { address: reflect-project, port_value: 10010 }}
