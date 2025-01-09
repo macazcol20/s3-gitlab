@@ -1,0 +1,12 @@
+dependencies:
+- name: postgresql
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: 12.8.0
+- name: keycloak
+  repository: https://codecentric.github.io/helm-charts
+  version: 18.4.3
+- name: rabbitmq
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: 12.0.9
+digest: sha256:3b60f110f4fd3a2d6ee25095b8724848416dde705cb15411287d7b7f9c369bb1
+generated: "2024-12-24T19:00:56.22474796-05:00"
