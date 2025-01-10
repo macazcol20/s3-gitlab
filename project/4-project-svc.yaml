@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: project
+  namespace: opr-develop
+  labels:
+    app.kubernetes.io/instance: opr
+    app.kubernetes.io/name: project
+spec:
+  clusterIP: 10.109.135.58
+  ports:
+  - name: prom-publisher
+    port: 1234
+    protocol: TCP
+    targetPort: 1234
+  - name: grpc
+    port: 10010
+    protocol: TCP
+    targetPort: 10010
+  - name: grpc-web
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 8090 # Map external port 80 to internal port 8080
+  - name: grpc-web-admin
+    port: 9901
+    protocol: TCP
+    targetPort: 9901
+  selector:
+    app.kubernetes.io/instance: opr
+    app.kubernetes.io/name: project
+  type: ClusterIP

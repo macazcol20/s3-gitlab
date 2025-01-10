@@ -1,0 +1,42 @@
+# apiVersion: networking.istio.io/v1alpha3
+# kind: VirtualService
+# metadata:
+#   name: project-service
+#   namespace: opr-develop
+# spec:
+#   gateways:
+#   - istio-system/grpc-gateway 
+#   hosts:
+#   - 'project-service.kapistiogroup.com'
+#   http:
+#   - name: api-swagger-route
+#     match:
+#     - uri:
+#         prefix: /api
+#     - uri:
+#         prefix: /swagger
+#     - uri:
+#         prefix: /v1
+#     route:
+#     - destination:
+#         host: project-service
+#         port:
+#           number: 80
+#   - name: grpc-route
+#     match:
+#     - uri:
+#         prefix: /
+#     route:
+#     - destination:
+#         host: project-service
+#         port:
+#           number: 10010
+#   - name: grpc-web-route
+#     match:
+#     - uri:
+#         prefix: /
+#     route:
+#     - destination:
+#         host: project-service
+#         port:
+#           number: 8080
