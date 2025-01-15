@@ -1,0 +1,24 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  labels:
+    app: minio
+  name: minio-http
+  namespace: minio-tenant
+spec:
+  gateways:
+  - istio-system/mimeo-gateway
+  hosts:
+  - 'minio-tenant.kapistiogroup.com'
+  http:
+  - retries:
+      attempts: 3
+      perTryTimeout: 2s
+    match:
+    - uri:
+        prefix: / 
+    route:
+    - destination:
+        host: myminio-console
+        port:
+          number: 9000

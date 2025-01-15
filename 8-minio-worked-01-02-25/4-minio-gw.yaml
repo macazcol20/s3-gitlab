@@ -1,0 +1,51 @@
+# apiVersion: networking.istio.io/v1alpha3
+# kind: Gateway
+# metadata:
+#   name: minio-gateway
+#   namespace: istio-system
+# spec:
+#   selector:
+#     istio: ingressgateway
+#   servers:
+#   - port:
+#       number: 443
+#       name: https
+#       protocol: HTTPS
+#     tls:
+#       mode: SIMPLE
+#       credentialName: myminio-tls  # Reference to your MinIO TLS secret
+#       privateKey: sds
+#       serverCertificate: sds
+#     hosts:
+#     - 'minio.kapistiogroup.com'
+
+apiVersion: networking.istio.io/v1
+kind: Gateway
+metadata:
+  labels:
+    app: ingressgateway
+    app.kubernetes.io/instance: ingressgateway
+    istio: ingressgateway
+  name: minio-gateway
+  namespace: minio-tenant
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - hosts:
+    - 'minio-tenant.kapistiogroup.com'
+    port:
+      name: http
+      number: 80
+      protocol: HTTP
+    tls:
+      httpsRedirect: true
+  - hosts:
+    - 'minio-tenant.kapistiogroup.com'
+    port:
+      name: https
+      number: 443
+      protocol: HTTPS
+    tls:
+      credentialName: myminio-tls
+      mode: SIMPLE
