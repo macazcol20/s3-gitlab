@@ -1,0 +1,46 @@
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: mumble-rest
+  namespace: opr-develop
+spec:
+  gateways:
+  - istio-system/mimeo-gateway
+  hosts:
+  - 'mumble-rest.kapistiogroup.com'
+  http:
+  - retries:
+      attempts: 3
+      perTryTimeout: 2s
+    match:
+    - uri:
+        prefix: /
+    route:
+    - destination:
+        host: mumble-rest
+        port:
+          number: 8082
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: murmur
+  namespace: opr-develop
+spec:
+  gateways:
+  - istio-system/mimeo-gateway
+  hosts:
+  - 'murmur.kapistiogroup.com'
+  http:
+  - retries:
+      attempts: 3
+      perTryTimeout: 2s
+    match:
+    - uri:
+        prefix: /
+    route:
+    - destination:
+        host: murmur
+        port:
+          number: 6502

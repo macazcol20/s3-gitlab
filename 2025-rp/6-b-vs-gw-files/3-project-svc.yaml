@@ -1,0 +1,70 @@
+## project-grpc
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: project-grpc
+  namespace: opr-develop
+spec:
+  gateways:
+  - istio-system/mimeo-gateway
+  hosts:
+  - develop.kapistiogroup.com
+  - web-develop.kapistiogroup.com
+  http:
+  - name: grpc
+    match:
+    - uri:
+        prefix: /
+    corsPolicy:
+      allowOrigins:
+      - exact: https://commonui.kapistiogroup.com
+      allowMethods:
+      - POST
+      - OPTIONS
+      allowHeaders:
+      - x-user-agent
+      - x-grpc-web
+      - x-reflect-appid
+      - x-reflect-clienttrace
+      - authorization
+      - content-type
+      exposeHeaders:
+      - "*"
+      allowCredentials: true
+      maxAge: "24h"
+    route:
+    - destination:
+        host: project
+        port:
+          number: 10010
+  - name: grpc-web
+    match:
+    - uri:
+        prefix: /
+    route:
+    - destination:
+        host: project
+        port:
+          number: 8080
+---
+## project-http
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: project-http
+  namespace: opr-develop
+spec:
+  gateways:
+  - istio-system/mimeo-gateway
+  hosts:
+  - develop.kapistiogroup.com
+  http:
+  - name: api-swagger
+    match:
+    - uri:
+        regex: /(api|swagger|v1).*
+    route:
+    - destination:
+        host: project
+        port:
+          number: 8089

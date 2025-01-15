@@ -1,0 +1,16 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: monitoring-tls
+  namespace: monitoring
+spec:
+  dnsNames:
+  - grafana.prd.kapistiogroup.com
+  - alertmanager.prd.kapistiogroup.com
+  - prometheus.prd.kapistiogroup.com
+  - sample-monitoring.kapistiogroup.com
+  issuerRef:
+    kind: ClusterIssuer
+    name: letsencrypt-prod
+  secretName: monitoring-tls # This secret will store the generated TLS certificate
+  

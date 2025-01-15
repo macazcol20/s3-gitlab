@@ -1,0 +1,22 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: annotations
+  namespace: opr-develop
+spec:
+  gateways:
+  - istio-system/mimeo-gateway
+  hosts:
+  - 'annotations.kapistiogroup.com'
+  http:
+  - retries:
+      attempts: 3
+      perTryTimeout: 2s
+    match:
+    - uri:
+        prefix: /
+    route:
+    - destination:
+        host: annotations
+        port:
+          number: 80

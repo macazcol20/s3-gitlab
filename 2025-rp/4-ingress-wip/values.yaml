@@ -1,0 +1,56 @@
+ingress-nginx:
+  rbac:
+    create: true
+  controller:
+    nodeSelector: {}
+    replicaCount: 1
+    service:
+      externalTrafficPolicy: Local
+    resources:
+      requests:
+        memory: "5000Mi"
+        cpu: "1300m"
+      limits:
+        memory: "5000Mi"
+        cpu: "1300m"
+    metrics:
+      enabled: true
+      service:
+        annotations:
+          prometheus.io/scrape: "true"
+          prometheus.io/port: "10254"
+        clusterIP: ""
+      # serviceMonitor:
+      #   enabled: true
+      #   namespace: monitoring
+    # autoscaling:
+    #   enabled: false
+    #   minReplicas: 3
+    #   maxReplicas: 5
+    #   targetCPUUtilizationPercentage: "75"
+    #   targetMemoryUtilizationPercentage: "75"
+    config:
+      keep-alive: "3600"
+      proxy-connect-timeout: "3600"
+      proxy-send-timeout: "3600"
+      proxy-read-timeout: "3600"
+      http2-max-requests: "1000000000"
+      http-snippet: |
+        http2_recv_timeout 36000s;
+        http2_idle_timeout 36000s;
+      server-snippet: |
+        grpc_read_timeout 36000s;
+        grpc_send_timeout 36000s;
+        client_body_timeout 36000s;
+  defaultBackend:
+    enabled: true
+    resources:
+      limits:
+        cpu: 100m
+        memory: 100Mi
+      requests:
+        cpu: 40m
+        memory: 40Mi
+
+certManager:
+  enabled: false

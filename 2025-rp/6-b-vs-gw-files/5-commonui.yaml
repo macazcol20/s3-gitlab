@@ -1,0 +1,24 @@
+
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: commonui
+  namespace: opr-develop
+spec:
+  gateways:
+  - istio-system/mimeo-gateway
+  hosts:
+  - 'dashboard.kapistiogroup.com'
+  http:
+  - retries:
+      attempts: 3
+      perTryTimeout: 2s
+    match:
+    - uri:
+        prefix: /
+    route:
+    - destination:
+        host: commonui
+        port:
+          number: 5000

@@ -1,0 +1,23 @@
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: matchmaker
+  namespace: opr-develop
+spec:
+  gateways:
+  - istio-system/mimeo-gateway
+  hosts:
+  - 'matchmaker.kapistiogroup.com'
+  http:
+  - retries:
+      attempts: 3
+      perTryTimeout: 2s
+    match:
+    - uri:
+        prefix: /
+    route:
+    - destination:
+        host: matchmaker
+        port:
+          number: 80

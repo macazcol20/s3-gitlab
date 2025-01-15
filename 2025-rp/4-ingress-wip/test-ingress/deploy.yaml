@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: monitoring-test-app
+  namespace: monitoring
+  labels:
+    app: monitoring-test-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: monitoring-test-app
+  template:
+    metadata:
+      labels:
+        app: monitoring-test-app
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        ports:
+        - containerPort: 80

@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: keycloak-tls
+  namespace: opr-develop
+spec:
+  dnsNames:
+  - keycloak.kapistiogroup.com # Wildcard covers all subdomains
+  issuerRef:
+    kind: ClusterIssuer
+    name: letsencrypt-prod
+  secretName: keycloak-tls # This secret will store the generated TLS certificate

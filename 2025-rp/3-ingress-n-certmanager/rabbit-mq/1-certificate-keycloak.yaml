@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: rabbitmq-tls
+  namespace: opr-develop
+spec:
+  dnsNames:
+  - rabbitmq.kapistiogroup.com # Wildcard covers all subdomains
+  issuerRef:
+    kind: ClusterIssuer
+    name: letsencrypt-prod
+  secretName: rabbitmq-tls # This secret will store the generated TLS certificate

@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: project-config
+  namespace: opr-develop
+  labels:
+    app.kubernetes.io/instance: opr
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: project
+    helm.sh/chart: reflect-common-chart-1.0.0
+  annotations:
+    meta.helm.sh/release-name: opr
+    meta.helm.sh/release-namespace: opr-develop
+data:
+  ASPNETCORE_URLS: http://+:8090  # Updated to bind to port 8090
+  OTEL_EXPORTER_OTLP_ENDPOINT: http://apm-server-apm-http:8200
+  OTEL_EXPORTER_OTLP_HEADERS: Authorization=Bearer 4113wNO7AFYO336Yn3vj2yvP
+  OTEL_RESOURCE_ATTRIBUTES: deployment.environment=production
+  OTEL_SERVICE_NAME: project
+  REFLECT_CLOUD: OnPrem
+  REFLECT_COMPONENT: project
+  REFLECT_DOMAIN: BAH OPR
+  REFLECT_ENVIRONMENT: Production
+  REFLECT_GATEWAY: unity.project-service.local
+  REFLECT_TESTRUNNER_WAIT: "1"
+  REFLECTPROJECT_LinkSharing__Domain: https://links.kapistiogroup.com
+  REFLECTPROJECT_LinkSharing__Path: p/
+  REFLECTPROJECT_Prometheus__Enabled: "true"
+  REFLECTPROJECT_Security__LicenseValidationStartDate: "2019-11-01T00:00:00Z"
+  REFLECTPROJECT_Security__OnPrem__AuthorizeEndpoint: https://kapistiogroup.com/realms/reflect/protocol/openid-connect/auth
+  REFLECTPROJECT_Security__OnPrem__ClientId: reflect
+  REFLECTPROJECT_Security__OnPrem__ClientIdClaim: azp
+  REFLECTPROJECT_Security__OnPrem__Domain: BAH OPR
+  REFLECTPROJECT_Security__OnPrem__NameClaim: preferred_username
+  REFLECTPROJECT_Security__OnPrem__OAuthJwkUrl: https://kapistiogroup.com/realms/reflect/protocol/openid-connect/certs
+  REFLECTPROJECT_Security__OnPrem__OrganizationName: Tyndall Air Force Base
+  REFLECTPROJECT_Security__OnPrem__RealmAccessRoleListOwnerOrManagerRole: ReflectOwnerManagerRole
+  REFLECTPROJECT_Security__OnPrem__RealmAccessRoleListUserRole: ReflectUserRole
+  REFLECTPROJECT_Security__OnPrem__RefreshEndpoint: https://kapistiogroup.com/realms/reflect/protocol/openid-connect/token
+  REFLECTPROJECT_Security__OnPrem__RevokeEndpoint: https://kapistiogroup.com/realms/reflect/protocol/openid-connect/revoke
+  REFLECTPROJECT_Security__OnPrem__Scope: openid
+  REFLECTPROJECT_Security__OnPrem__TokenEndpoint: https://kapistiogroup.com/realms/reflect/protocol/openid-connect/token
+  REFLECTPROJECT_Security__OnPrem__UserInfoEndpoint: https://kapistiogroup.com/realms/reflect/protocol/openid-connect/userinfo
+  REFLECTPROJECT_Security__OnPrem__ValidIssuer: https://kapistiogroup.com/realms/reflect
+  REFLECTPROJECT_Security__OnPrem__ViewerProtocol: reflect
+  REFLECTPROJECT_ServerEndpoint__Host: 0.0.0.0
+  REFLECTPROJECT_ServiceEndpoints__Annotations__HttpAddress: https://annotations-develop.opr.kapistiogroup.com
+  REFLECTPROJECT_ServiceEndpoints__MatchMaker__GrpcAddress: https://matchmaker-develop.opr.kapistiogroup.com
+  REFLECTPROJECT_ServiceEndpoints__MatchMaker__HttpAddress: https://matchmaker-develop.opr.kapistiogroup.com
+  REFLECTPROJECT_ServiceEndpoints__ProjectServer__GrpcAddress: https://develop.opr.kapistiogroup.com
+  REFLECTPROJECT_ServiceEndpoints__ProjectServer__GrpcWebAddress: https://web-develop.opr.kapistiogroup.com
+  REFLECTPROJECT_ServiceEndpoints__ProjectServer__HttpAddress: https://develop.opr.kapistiogroup.com
+  REFLECTPROJECT_ServiceEndpoints__VoipServer__OtherServerAddress: mumble://voip-develop.opr.kapistiogroup.com:30000
+  REFLECTPROJECT_SyncServer__Cloud__Address: https://sync-develop.opr.kapistiogroup.com
+  REFLECTPROJECT_SyncServer__Cloud__SupportsDecimation: "true"
+  URLS: http://+:8090  # Updated to match ASPNETCORE_URLS

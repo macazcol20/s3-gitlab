@@ -1,0 +1,27 @@
+# apiVersion: networking.istio.io/v1alpha3
+# kind: Gateway
+# metadata:
+#   name: project-gateway
+#   namespace: opr-develop
+# spec:
+#   selector:
+#     istio: ingressgateway
+#   servers:
+#   - port:
+#       number: 443
+#       name: https
+#       protocol: HTTPS
+#     tls:
+#       mode: SIMPLE
+#       credentialName: develop-tls
+#     hosts:
+#     - develop.kapistiogroup.com
+#   - port:
+#       number: 443
+#       name: https-web
+#       protocol: HTTPS
+#     tls:
+#       mode: SIMPLE
+#       credentialName: web-develop-tls
+#     hosts:
+#     - web-develop.kapistiogroup.com

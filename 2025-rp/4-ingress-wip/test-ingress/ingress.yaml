@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: monitoring-test-ingress
+  namespace: monitoring
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    cert-manager.io/cluster-issuer: "reflect-letsencrypt-issuer"
+spec:
+  tls:
+  - hosts:
+    - grafana.prd.kapistiogroup.com
+    secretName: monitoring-tls
+  rules:
+  - host: grafana.prd.kapistiogroup.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: monitoring-test-service
+            port:
+              number: 80

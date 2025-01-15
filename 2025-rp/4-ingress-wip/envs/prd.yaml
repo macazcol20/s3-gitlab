@@ -1,0 +1,37 @@
+ingress-nginx:
+  controller:
+    nodeSelector:
+      'eks.amazonaws.com/nodegroup': general-mimeo-workers-20241227112101383400000007
+    autoscaling:
+      enabled: true
+      minReplicas: 3
+      maxReplicas: 10
+      targetCPUUtilizationPercentage: "75"
+      targetMemoryUtilizationPercentage: "75"
+
+certManager:
+  issuer:
+    acmeEmail: cafanwi@kapistio.com
+    preferredChain: "ISRG Root X1"
+    awsRegion: "us-east-1"
+    awsIAMRole: "arn:aws:iam::440744236785:role/cert-manager-2024122710575978590000000f"
+  certificates:
+    tls:
+      namespace: default
+      dnsNames:
+        - kapistiogroup.com
+        - p.kapistiogroup.com
+        - web.p.kapistiogroup.com
+        - canary.p.kapistiogroup.com
+        - s.kapistiogroup.com
+        - web.a.kapistiogroup.com
+        - web.b.kapistiogroup.com
+        - dashboard.kapistiogroup.com
+        - m.kapistiogroup.com
+        - downloads.kapistiogroup.com
+    monitoring-tls:
+      namespace: monitoring
+      dnsNames:
+        - grafana.prd.kapistiogroup.com
+        - alertmanager.prd.kapistiogroup.com
+        - prometheus.prd.kapistiogroup.com

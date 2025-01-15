@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: keycloak-ingress
+  namespace: opr-develop
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod" # Ensure this matches the ClusterIssuer name
+    nginx.ingress.kubernetes.io/ssl-redirect: "true" # Redirect HTTP to HTTPS
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m" # Optional: Customize Nginx config
+spec:
+  ingressClassName: nginx # Ensure this matches your Nginx ingress class name
+  tls:
+  - hosts:
+    - keycloak.kapistiogroup.com # Match this to your Certificate's dnsNames
+    secretName: keycloak-tls # This must match the secretName in your Certificate
+  rules:
+  - host: keycloak.kapistiogroup.com # Ensure this matches the DNS configuration
+    http:
+      paths:
+      - path: / # Use root path
+        pathType: Prefix
+        backend:
+          service:
+            name: opr-keycloak-http # Corrected to match your Service name
+            port:
+              number: 80 # Port for HTTP traffic

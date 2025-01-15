@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: sample-monitoring-ingress
+  namespace: monitoring
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod" # Ensure this matches the ClusterIssuer name
+    nginx.ingress.kubernetes.io/ssl-redirect: "true" # Redirect HTTP to HTTPS
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+spec:
+  ingressClassName: nginx 
+  tls:
+  - hosts:
+    - prometheus.prd.kapistiogroup.com   # sample-monitoring.kapistiogroup.com 
+    secretName: monitoring-tls 
+  rules:
+  - host: prometheus.prd.kapistiogroup.com  # sample-monitoring.kapistiogroup.com 
+    http:
+      paths:
+      - path: / 
+        pathType: Prefix
+        backend:
+          service:
+            name: sample-monitoring 
+            port:
+              number: 80
