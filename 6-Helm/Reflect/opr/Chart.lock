@@ -1,0 +1,24 @@
+dependencies:
+- name: postgresql
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: 12.8.0
+- name: keycloak
+  repository: https://codecentric.github.io/helm-charts
+  version: 18.4.3
+- name: rabbitmq
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: 12.0.9
+- name: project
+  repository: oci://us-east1-docker.pkg.dev/unity-solutions-tyndall-prd/docker/helm
+  version: 1.0.0
+- name: project-grpc-nodeport
+  repository: oci://us-east1-docker.pkg.dev/unity-solutions-tyndall-prd/docker/helm
+  version: 1.0.0
+- name: postgres-integration-svc
+  repository: oci://us-east1-docker.pkg.dev/unity-solutions-tyndall-prd/docker/helm
+  version: 1.0.0
+- name: commonui
+  repository: oci://us-east1-docker.pkg.dev/unity-solutions-tyndall-prd/docker/helm
+  version: 1.0.0
+digest: sha256:01efc7abc0011fc054fe2899f3049fe3ec88b8edbe49d810afdbdd49f12bd18b
+generated: "2025-01-11T16:52:39.562411634Z"
