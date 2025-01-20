@@ -1,0 +1,187 @@
+server:
+  ingress:
+    hosts:
+      - argocd.test.reflect.unity3d.com
+    tls:
+      - secretName: argo-tls
+        hosts:
+          - argocd.test.reflect.unity3d.com
+  ingressGrpc:
+    hosts:
+      - argocd.grpc.test.reflect.unity3d.com
+    tls:
+      - secretName: argo-tls
+        hosts:
+          - argocd.grpc.test.reflect.unity3d.com
+  additionalApplications:
+    - name: project
+      destination:
+        namespace: default
+        server: https://kubernetes.default.svc
+      finalizers:
+      - resources-finalizer.argocd.argoproj.io
+      project: reflect
+      source:
+        chart: project-gcp
+        repoURL: gs://reflect-helm-test
+        targetRevision: 1.0.14
+        helm:
+          valueFiles:
+            - values.yaml
+            - envs/gcp/test.yaml
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+    - name: sync
+      destination:
+        namespace: default
+        server: https://kubernetes.default.svc
+      finalizers:
+      - resources-finalizer.argocd.argoproj.io
+      project: reflect
+      source:
+        chart: sync-gcp
+        repoURL: gs://reflect-helm-test
+        targetRevision: 1.0.14
+        helm:
+          valueFiles:
+            - values.yaml
+            - envs/gcp/test.yaml
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+    - name: annotations
+      destination:
+        namespace: default
+        server: https://kubernetes.default.svc
+      finalizers:
+      - resources-finalizer.argocd.argoproj.io
+      project: reflect
+      source:
+        chart: annotations-gcp
+        repoURL: gs://reflect-helm-test
+        targetRevision: 1.0.1
+        helm:
+          valueFiles:
+            - values.yaml
+            - envs/gcp/test.yaml
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+    - name: bim360
+      destination:
+        namespace: default
+        server: https://kubernetes.default.svc
+      finalizers:
+      - resources-finalizer.argocd.argoproj.io
+      project: reflect
+      source:
+        chart: bim360-gcp
+        repoURL: gs://reflect-helm-test
+        targetRevision: 1.0.0
+        helm:
+          valueFiles:
+            - values.yaml
+            - envs/gcp/test.yaml
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+    - name: links
+      destination:
+        namespace: default
+        server: https://kubernetes.default.svc
+      finalizers:
+      - resources-finalizer.argocd.argoproj.io
+      project: reflect
+      source:
+        chart: links-gcp
+        repoURL: gs://reflect-helm-test
+        targetRevision: 1.0.0
+        helm:
+          valueFiles:
+            - values.yaml
+            - envs/gcp/test.yaml
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+    - name: multiplayer
+      destination:
+        namespace: default
+        server: https://kubernetes.default.svc
+      finalizers:
+      - resources-finalizer.argocd.argoproj.io
+      project: reflect
+      source:
+        chart: multiplayer-gcp
+        repoURL: gs://reflect-helm-test
+        targetRevision: 1.0.0
+        helm:
+          valueFiles:
+            - values.yaml
+            - envs/gcp/test.yaml
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+    - name: commonui
+      destination:
+        namespace: default
+        server: https://kubernetes.default.svc
+      finalizers:
+      - resources-finalizer.argocd.argoproj.io
+      project: reflect
+      source:
+        chart: commonui-gcp
+        repoURL: gs://reflect-helm-test
+        targetRevision: 1.0.0
+        helm:
+          valueFiles:
+            - values.yaml
+            - envs/gcp/test.yaml
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+    - name: downloads
+      finalizers:
+      - resources-finalizer.argocd.argoproj.io
+      project: reflect
+      source:
+        chart: downloads-gcp
+        repoURL: gs://reflect-helm-test
+        targetRevision: 1.0.0
+        helm:
+          valueFiles:
+            - values.yaml
+            - envs/gcp/test.yaml
+      destination:
+        server: 'https://kubernetes.default.svc'
+        namespace: default
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+    - name: forma-ecommerce
+      finalizers:
+      - resources-finalizer.argocd.argoproj.io
+      project: forma
+      source:
+        chart: forma-ecommerce
+        repoURL: gs://reflect-helm-test
+        targetRevision: 1.0.0-8cdcedffad3e1648addd703571865f30e04a97d8
+        helm:
+          valueFiles:
+            - values.yaml
+            - envs/gcp/test.yaml
+      destination:
+        server: 'https://kubernetes.default.svc'
+        namespace: forma
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true

@@ -1,0 +1,254 @@
+infra:
+  postgresql: true
+  keycloak: true
+  rabbitmq: true
+  project-grpc-nodeport: true
+  postgres-integration-svc: true
+
+rabbitmq:
+  auth:
+    username: admin
+    password: rabbitmq-secret-key
+    securePassword: false
+  persistence:
+    storageClass: longhorn
+
+## The documenation for this chart can be found here: 
+## https://github.com/codecentric/helm-charts/tree/master/charts/keycloak 
+## This config assumes there is a secret named `realm-secret` that contains `realm.json`
+## The config is mounted inside the container at `/opt/keycloak/data/import/realm.json`
+keycloak:
+  image:
+    repository: registry1.dso.mil/ironbank/opensource/keycloak/keycloak
+    tag: 21.1.2
+  imagePullSecrets:
+  - name: regcred-ironbank
+  postgresql:
+    enabled: false
+  command:
+    - "/opt/keycloak/bin/kc.sh"
+  args:
+    - "start-dev"
+    - "--import-realm"
+    - "--health-enabled=true"
+  extraVolumes: |
+    - name: realm-secret
+      secret:
+        secretName: realm-secret
+  extraVolumeMounts: |
+    - name: realm-secret
+      mountPath: "/opt/keycloak/data/import/"
+      readOnly: true
+  extraEnv: |
+    - name: KEYCLOAK_IMPORT
+      value: /opt/keycloak/data/import/realm.json
+    - name: KEYCLOAK_REFLECT_REALM_NAME
+      value: "reflect"
+    - name: KEYCLOAK_LOGLEVEL
+      value: DEBUG
+    - name: PROXY_ADDRESS_FORWARDING
+      value: 'true'
+    - name: KC_PROXY
+      value: edge
+    - name: KC_HOSTNAME_URL
+      value: "https://keycloak.middleware-dev.com"
+  secrets:
+    env:
+      stringData:
+        KEYCLOAK_ADMIN: "admin"
+        KEYCLOAK_ADMIN_PASSWORD: "admin"
+        KEYCLOAK_REFLECT_TEST_USERNAME: reflect-user
+        KEYCLOAK_REFLECT_TEST_MANAGER_USERNAME: reflect-admin
+        KEYCLOAK_REFLECT_TEST_ANONYMOUS_USERNAME: reflect-anonymous
+  extraEnvFrom: |
+    - secretRef:
+        name: opr-keycloak-env
+  livenessProbe: |
+    httpGet:
+      path: /health/live
+      port: http
+    initialDelaySeconds: 30
+    timeoutSeconds: 10
+  readinessProbe: |
+    httpGet:
+      path: /health/ready
+      port: http
+    initialDelaySeconds: 60
+    timeoutSeconds: 5
+  startupProbe: |
+    httpGet:
+      path: /health/started
+      port: http
+    initialDelaySeconds: 06
+    timeoutSeconds: 10
+    failureThreshold: 60
+    periodSeconds: 5
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt
+      nginx.ingress.kubernetes.io/cors-allow-origin: "https://dashboard.middleware-dev.com"
+      nginx.ingress.kubernetes.io/enable-cors: "true"
+      nginx.ingress.kubernetes.io/cors-expose-headers: "*"
+    rules:
+      - 
+        host: 'keycloak.middleware-dev.com'
+        paths: 
+          - path: /
+            pathType: Prefix
+    tls:
+      - secretName: keycloak-develop-tls
+        hosts:
+          - keycloak.middleware-dev.com
+
+## The documentation for this chart can be found here:
+## https://github.com/bitnami/charts/tree/main/bitnami/postgresql
+postgresql:
+  global:
+    imagePullSecrets:
+      - regcred-ironbank
+    auth:
+      postgresPassword: "reflect"
+  image:
+    registry: registry1.dso.mil
+    repository: ironbank/bitnami/postgres/postgresql11
+    tag: 11.19.0
+    pullSecrets:
+    - name: regcred-ironbank
+  auth:
+    postgresPassword: "reflect"
+  primary:
+    persistence:
+      storageClass: longhorn
+      size: 5Gi
+    extraEnvVars:
+    - name: POSTGRES_USER
+      value: "postgres"
+    - name: PROJECT_SERVICE_DB_PASSWORD
+      value: "reflect"
+    - name: SYNC_SERVICE_DB_PASSWORD
+      value: "reflect"
+    - name: ANNOTATIONS_DB_PASSWORD
+      value: "reflect"
+    - name: MATCHMAKER_DB_PASSWORD
+      value: "reflect"
+    - name: MURMUR_DB_PASSWORD
+      value: "reflect"
+    initdb:
+# This is a configmap that contains scripts and sql files that is mounted into the postgres container and executed on first boot
+# UnComment if scripts have been added to a configmap. Will overwrite primary.initdb.scripts.*.  
+      #scriptsConfigMap: "db-init"
+# These are script used to intializse users in the postgres db. If using migrations to update/seed the database, uncomment the section below to initialize
+# the user and databases for use in the migration scripts
+      scripts:
+        create_users.sql : | 
+          CREATE USER project_service WITH ENCRYPTED PASSWORD 'reflect';
+          CREATE DATABASE "ProjectService" WITH TEMPLATE = template0 ENCODING = 'UTF8' LC_COLLATE = 'en_US.utf8' LC_CTYPE = 'en_US.utf8' OWNER project_service;
+          CREATE USER sync_service WITH ENCRYPTED PASSWORD 'reflect';
+          CREATE DATABASE "SyncService" WITH TEMPLATE = template0 ENCODING = 'UTF8' LC_COLLATE = 'en_US.utf8' LC_CTYPE = 'en_US.utf8' OWNER sync_service;
+          CREATE DATABASE "SyncService_Hangfire" WITH OWNER sync_service;
+          CREATE USER annotations WITH ENCRYPTED PASSWORD 'reflect';
+          CREATE DATABASE "Annotations" WITH TEMPLATE = template0 ENCODING = 'UTF8' LC_COLLATE = 'en_US.utf8' LC_CTYPE = 'en_US.utf8' OWNER annotations;
+
+## The project service chart depends on another chart `reflect-common-chart`
+project:
+  reflect-common-chart:
+    imagePullSecrets:
+      - name: regcred-gcp
+    image:
+      repository: us-east1-docker.pkg.dev/........
+      tag: develop-latest
+      pullPolicy: Always
+    resources: {}
+    serviceMonitor:
+      enabled: false
+    deployment:
+      volumeMounts:
+        - name: cert
+          mountPath: /secrets/jwt
+          readOnly: true
+    volumes:
+    - name: cert
+      secret:
+        secretName: project-cert
+  
+    workloadIdentity:
+      enabled: false
+    cloudSqlSidecar:
+      enabled: false
+    autoscaling:
+      enabled: false
+#    volumes:
+#      - name: jwt
+#        secret:
+#          defaultMode: 420
+#          secretName: jwt
+    serviceAccount:
+      create: true
+      name: reflect-project-sa
+    deployment:
+      envFrom:
+      - secretRef:
+          name: project-external-secrets
+      - configMapRef:
+          name: project-config
+      env:   # collins
+        - name: ASPNETCORE_URLS 
+          value: http://+:8090 
+    configMaps:
+      project-config:
+        data:
+          REFLECT_ENVIRONMENT: "Production"
+          ASPNETCORE_URLS: http://+:8090 # collins
+          URLS: http://+:8090   # collins
+          REFLECTPROJECT_ServerEndpoint__Host: 0.0.0.0
+          REFLECT_CLOUD: "OnPrem"
+          REFLECT_DOMAIN: "BAH OPR"
+          REFLECTPROJECT_LinkSharing__Domain: "https://links.middleware-dev.com"
+          REFLECTPROJECT_LinkSharing__Path: "p/"
+          REFLECTPROJECT_Security__OnPrem__ClientId: "reflect"
+          REFLECTPROJECT_Security__OnPrem__ValidIssuer: "https://keycloak.middleware-dev.com/realms/reflect"
+          REFLECTPROJECT_Security__OnPrem__Domain: "BAH OPR"
+          REFLECTPROJECT_Security__OnPrem__Scope: "openid"
+          REFLECTPROJECT_Security__OnPrem__ViewerProtocol: "reflect"
+          REFLECTPROJECT_Security__OnPrem__ClientIdClaim: "azp"
+          REFLECTPROJECT_Security__OnPrem__NameClaim: "preferred_username"
+          REFLECTPROJECT_Security__OnPrem__RealmAccessRoleListOwnerOrManagerRole: "ReflectOwnerManagerRole"
+          REFLECTPROJECT_Security__OnPrem__RealmAccessRoleListUserRole: "ReflectUserRole"
+          REFLECTPROJECT_Security__OnPrem__AuthorizeEndpoint: "https://keycloak.middleware-dev.com/realms/reflect/protocol/openid-connect/auth"
+          REFLECTPROJECT_Security__OnPrem__RevokeEndpoint: "https://keycloak.middleware-dev.com/realms/reflect/protocol/openid-connect/revoke"
+          REFLECTPROJECT_Security__OnPrem__TokenEndpoint: "https://keycloak.middleware-dev.com/realms/reflect/protocol/openid-connect/token"
+          REFLECTPROJECT_Security__OnPrem__RefreshEndpoint: "https://keycloak.middleware-dev.com/realms/reflect/protocol/openid-connect/token"
+          REFLECTPROJECT_Security__OnPrem__OAuthJwkUrl: "https://keycloak.middleware-dev.com/realms/reflect/protocol/openid-connect/certs"
+          REFLECTPROJECT_Security__OnPrem__UserInfoEndpoint: "https://keycloak.middleware-dev.com/realms/reflect/protocol/openid-connect/userinfo"
+          REFLECTPROJECT_ServiceEndpoints__ProjectServer__HttpAddress: "https://develop.middleware-dev.com"
+          REFLECTPROJECT_ServiceEndpoints__ProjectServer__GrpcAddress: "https://develop.middleware-dev.com"
+          REFLECTPROJECT_ServiceEndpoints__ProjectServer__GrpcWebAddress: "https://web-develop.middleware-dev.com"
+          REFLECTPROJECT_ServiceEndpoints__VoipServer__OtherServerAddress: "mumble://voip-develop.opr.unity.com:30000"
+          OTEL_EXPORTER_OTLP_ENDPOINT: "http://apm-server-apm-http:8200"
+          OTEL_EXPORTER_OTLP_HEADERS: "Authorization=Bearer 4113wNO7AFYO336Yn3vj2yvP"
+          OTEL_RESOURCE_ATTRIBUTES: "deployment.environment=production"
+          OTEL_SERVICE_NAME: "project"
+    # disables external secrets and use standard k8s secrets
+    externalSecrets:
+      enabled: false
+    # Secrets for reflect-project container
+    secrets:
+      project-external-secrets:
+        type: Opaque
+        data:
+          REFLECTPROJECT_ConnectionStrings__ProjectServiceDatabase: "Host=opr-postgresql;Database=ProjectService;Username=project_service;Password=reflect"
+          REFLECTPROJECT_SyncServer__Cloud__ClientId: "syncid"
+          REFLECTPROJECT_SyncServer__Cloud__ClientSecret: "syncsecret"
+    # Envoy required to upgrade grpc connections
+    sidecarContainers:
+      enabled: true
+      containers:
+        - image: us-east1-docker.pkg.dev/unity-solutions-tyndall-prd/docker/reflect-envoy-k8s:develop-latest
+          imagePullPolicy: Always
+          securityContext:
+            runAsUser: 2
+            allowPrivilegeEscalation: false
+          name: envoy
+          resources: {}

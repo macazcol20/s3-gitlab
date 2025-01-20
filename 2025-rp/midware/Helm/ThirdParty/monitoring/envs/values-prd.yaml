@@ -1,0 +1,27 @@
+env: prd
+
+grafana:
+  ingress:
+    hosts:
+      - grafana.prd.reflect.unity3d.com
+    tls:
+      - secretName: monitoring-tls
+        hosts:
+          - grafana.prd.reflect.unity3d.com
+alertmanager: 
+  ingress:
+    hosts:
+      - alertmanager.prd.reflect.unity3d.com
+    tls:
+      - secretName: monitoring-tls
+        hosts:
+          - alertmanager.prd.reflect.unity3d.com
+prometheus:
+  ingress:
+    enabled: true
+    hosts:
+      - prometheus.prd.reflect.unity3d.com
+    tls:
+      - secretName: monitoring-tls
+        hosts:
+          - prometheus.prd.reflect.unity3d.com

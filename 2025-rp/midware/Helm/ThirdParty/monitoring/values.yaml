@@ -1,0 +1,246 @@
+# Overrides Prometheus Helm charts
+
+alertmanager: 
+  ingress:
+    enabled: true 
+    annotations:
+      kubernetes.io/ingress.global-static-ip-name: alertmanager
+    paths:
+      - /*
+
+  service:
+    port: 9093
+    type: NodePort
+    annotations:
+      beta.cloud.google.com/backend-config: '{"ports": {"9093":"monitoring-9093"}}'
+
+  alertmanagerSpec:
+    replicas: 3
+    externalUrl:
+    routePrefix: /
+    logFormat: logfmt
+    nodeSelector:
+       role: monitoring
+    tolerations:
+      - effect: NoSchedule
+        key: role
+        operator: Equal
+        value: monitoring
+
+  config:
+
+    # `route:` added from values-alert-routes.yaml
+    # `receivers:` added from ~/.reflect/secrets/prd/monitoring/config.yaml
+
+    # See https://github.com/prometheus/alertmanager/blob/master/doc/examples/simple.yml
+    route:
+      group_by: ['alertname', 'cluster', 'service']
+      group_wait: 5m
+      group_interval: 5m
+      repeat_interval: 5h 
+      receiver: "null"
+      
+grafana:
+  ingress:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.global-static-ip-name: grafana
+    path: /*
+
+  dashboardProviders:
+    dashboardproviders.yaml:
+      apiVersion: 1
+      providers:
+      - name: 'reflect'
+        orgId: 1
+        folder: 'Reflect'
+        type: file
+        disableDeletion: false
+        editable: true
+        options:
+          path: /var/lib/grafana/dashboards/reflect
+     
+  service:
+    type: NodePort
+    port: 80
+    targetPort: 3000
+    portName: service
+    annotations:
+      beta.cloud.google.com/backend-config: '{"ports": {"80":"monitoring-80"}}'
+
+  nodeSelector:
+       role: monitoring
+
+  tolerations:
+    - effect: NoSchedule
+      key: role
+      operator: Equal
+      value: monitoring
+
+prometheus:
+  ingress:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.global-static-ip-name: prometheus
+    paths:
+      - "/*"
+
+  service:
+    port: 9090
+    type: NodePort
+    annotations:
+      beta.cloud.google.com/backend-config: '{"ports": {"9090":"monitoring-9090"}}'
+
+
+  prometheusSpec:
+    podMonitorSelectorNilUsesHelmValues: false
+    serviceMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelector: {}
+    serviceMonitorSelector: {}
+    nodeSelector:
+       role: monitoring
+    tolerations:
+      - effect: NoSchedule
+        key: role
+        operator: Equal
+        value: monitoring
+    externalUrl: ""
+    retention: 10d
+    replicas: 2
+    resources:
+      limits:
+        cpu: '6'
+        memory: 12000Mi
+      requests:
+        cpu: '6'
+        memory: 12000Mi
+    storageSpec: 
+     volumeClaimTemplate:
+       spec:
+         accessModes: ["ReadWriteOnce"]
+         resources:
+           requests:
+             storage: 100Gi
+
+additionalPrometheusRulesMap:
+  nginx-ingress:
+    groups:
+      - name: nginx.rules
+        rules:
+          - alert: TooMany500s
+            expr: 100 * ( sum( nginx_ingress_controller_requests{status=~"5.+"} ) / sum(nginx_ingress_controller_requests) ) > 5
+            for: 1m
+            labels:
+              severity: critical
+            annotations:
+              description: Too many 5XXs
+              summary: More than 5% of all requests returned 5XX, this requires your attention
+
+  reflect:
+    groups:
+      - name: reflect.rules
+        rules:
+          # "Warnings" of severity "disaster" (Slack & PagerDuty - raises SRE alert):
+          - alert: ReflectBim360ServerTestsPassRate
+            annotations:
+              description: '{{ $labels.job }} reports {{ $value }}% pass rate.'
+              summary: Bim360 Server tests are failing
+            expr: reflect_testrunner_pass_percentage{component="bim360-tests"} < 100
+            for: 5m
+            labels:
+              severity: disaster
+          - alert: ReflectSyncServiceTestsPassRate
+            annotations:
+              description: '{{ $labels.job }} reports {{ $value }}% pass rate.'
+              summary: Sync Service tests are failing
+            expr: reflect_testrunner_pass_percentage{component="sync-tests"} < 100
+            for: 5m
+            labels:
+              severity: high
+
+          # Warnings of severity "warning" (only Slack - Reflect Team only):
+          - alert: ReflectProjectTestsDuration
+            annotations:
+              description: '{{ $labels.job }} reports long test duration for the Project Server'
+              summary: Project Server tests are taking a long time to complete
+            expr: reflect_testrunner_duration{component="project-tests"} > 200
+            for: 30m
+            labels:
+              severity: warning
+          - alert: ReflectSyncTestsDuration
+            annotations:
+              description: '{{ $labels.job }} reports long test duration for the Sync Service'
+              summary: Sync Service tests are taking a long time to complete
+            expr: reflect_testrunner_duration{component="sync-tests"} > 100
+            for: 10m
+            labels:
+              severity: warning
+          
+          # High severity warnings (only Slack)
+          - alert: ReflectNodeCount
+            annotations:
+              description: An unexpectedly high number of nodes overall are in use ({{ $value }} > 200)
+            expr: count(kube_node_labels) > 200
+            for: 3s
+            labels:
+              severity: high
+          - alert: ReflectNetcodeNodeCount
+            annotations:
+              description: More than half the available Netcode Server nodes are being used ({{ $value }} > 25)
+            expr: count(kube_node_labels{label_cloud_google_com_gke_nodepool="reflect-netcode"}) > 25
+            for: 3s
+            labels:
+              severity: high
+          - alert: ReflectDbCpuUtilizationHigh
+            annotations:
+              description: CPU Utilization for the Reflect Database is high ({{ $value }} > 0.7)
+            expr: reflect_db_cpu_utilization > 0.7
+            for: 1m
+            labels:
+              severity: high
+          - alert: ReflectHungTransactionsDuration
+            annotations:
+              description: There are hung database transactions that are older than 300s ({{ $value }} > 300)
+            expr: reflect_db_hung_transactions > 300
+            for: 1m
+            labels:
+              severity: high
+          - alert: ReflectDeadTuplesCount
+            annotations:
+              description: There are too many dead tuples in the database ({{ $value }} > 500)
+            expr: reflect_db_dead_tuples > 500
+            for: 1m
+            labels:
+              severity: high
+  custom-kubernetes:
+    groups:
+      - name: custom-kubernetes.rules
+        rules:
+          - alert: PodOOMKilled
+            expr: sum_over_time(kube_pod_container_status_terminated_reason{reason="OOMKilled"}[5m]) > 0
+            for: 1m
+            labels:
+              severity: warning
+            annotations:
+              description: Pod {{$labels.namespace}}/{{$labels.pod}} was OOMKilled {{$value}} times in the last 5 minutes
+              summary: Pod is out of memory
+          - alert: PodFrequentlyRestarting
+            expr: increase(kube_pod_container_status_restarts_total[1h]) > 5
+            for: 10m
+            labels:
+              severity: critical
+            annotations:
+              description: Pod {{$labels.namespace}}/{{$labels.pod}} was restarted {{$value}} times within the last hour
+              summary: Pod is restarting frequently
+
+coreDns:
+  enabled: false
+
+kubeScheduler:
+  enabled: false
+
+kubeControllerManager:
+  enabled: false
+
+kubeEtcd:
+  enabled: false

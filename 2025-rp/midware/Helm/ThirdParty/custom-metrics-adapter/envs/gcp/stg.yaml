@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: custom-metrics-sa
+  namespace: custom-metrics
+  annotations:
+    iam.gke.io/gcp-service-account: custom-metrics-sa@unity-vert-reflect-stg.iam.gserviceaccount.com

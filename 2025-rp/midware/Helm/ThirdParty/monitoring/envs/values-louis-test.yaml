@@ -1,0 +1,15 @@
+env: test
+
+grafana:
+  ingress:
+    hosts:
+      - grafana.louis-test.reflect.unity3d.com
+alertmanager: 
+  ingress:
+    hosts:
+      - alertmanager.louis-test.reflect.unity3d.com
+prometheus:
+  ingress:
+    enabled: true
+    hosts:
+      - prometheus.louis-test.reflect.unity3d.com

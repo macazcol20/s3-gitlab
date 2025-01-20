@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: regcred-gcp-test
+  namespace: opr-develop
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: regcred-gcp-test
+  template:
+    metadata:
+      labels:
+        app: regcred-gcp-test
+    spec:
+      containers:
+        - name: regcred-gcp-test
+          image: us-east1-docker.pkg.dev/unity-solutions-tyndall-prd/docker/helm/project:1.0.0
+          ports:
+            - containerPort: 8080
+      imagePullSecrets:
+        - name: regcred-gcp

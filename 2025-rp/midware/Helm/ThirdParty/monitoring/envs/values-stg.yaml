@@ -1,0 +1,27 @@
+env: stg
+
+grafana:
+  ingress:
+    hosts:
+      - grafana.stg.reflect.unity3d.com
+    tls:
+      - secretName: monitoring-tls
+        hosts:
+          - grafana.stg.reflect.unity3d.com
+alertmanager: 
+  ingress:
+    hosts:
+      - alertmanager.stg.reflect.unity3d.com
+    tls:
+      - secretName: monitoring-tls
+        hosts:
+          - alertmanager.stg.reflect.unity3d.com
+prometheus:
+  ingress:
+    enabled: true
+    hosts:
+      - prometheus.stg.reflect.unity3d.com
+    tls:
+      - secretName: monitoring-tls
+        hosts:
+          - prometheus.stg.reflect.unity3d.com

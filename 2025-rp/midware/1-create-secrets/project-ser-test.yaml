@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: project-test-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: project-test
+  template:
+    metadata:
+      labels:
+        app: project-test
+    spec:
+      containers:
+        - name: project-test
+          image: us-east1-docker.pkg.dev/unity-solutions-tyndall-prd/docker/reflect-project
+          ports:
+            - containerPort: 8080
+      imagePullSecrets:
+        - name: regcred-gcp

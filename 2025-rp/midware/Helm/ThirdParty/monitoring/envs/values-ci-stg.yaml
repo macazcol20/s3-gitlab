@@ -1,0 +1,15 @@
+env: ci-stg
+
+grafana:
+  ingress:
+    hosts:
+      - grafana.ci-stg.reflect.unity3d.com
+alertmanager: 
+  ingress:
+    hosts:
+      - alertmanager.ci-stg.reflect.unity3d.com
+prometheus:
+  ingress:
+    enabled: true
+    hosts:
+      - prometheus.ci-stg.reflect.unity3d.com

@@ -1,0 +1,25 @@
+# Adds CloudArmor
+
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: monitoring-80  # Grafana port
+spec:
+  securityPolicy:
+    name: unity-internal
+---
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: monitoring-9090  # Prometheus port
+spec:
+  securityPolicy:
+    name: unity-internal
+---
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: monitoring-9093  # Alertmanager port
+spec:
+  securityPolicy:
+    name: unity-internal
