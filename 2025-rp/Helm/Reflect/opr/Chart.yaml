@@ -1,0 +1,53 @@
+apiVersion: v2
+name: opr
+description: A Helm chart for Kubernetes
+type: application
+version: 0.2.0
+appVersion: "1.16.0"
+dependencies:
+  - name: postgresql
+    version: 12.8.0
+    repository: "oci://registry-1.docker.io/bitnamicharts"
+    condition: infra.postgresql
+  - name: keycloak
+    version: 18.4.3
+    repository: "https://codecentric.github.io/helm-charts"
+    condition: infra.keycloak
+  - name: rabbitmq
+    version: 12.0.9
+    repository: "oci://registry-1.docker.io/bitnamicharts"
+    condition: infra.rabbitmq
+  # - name: project
+  #   version: 1.0.0
+  #   repository: "oci://us-east1-docker.pkg.dev/unity-solutions-tyndall-prd/docker/helm"
+  - name: sync
+    version: 1.0.0
+    repository: "oci://us-east1-docker.pkg.dev/unity-solutions-tyndall-prd/docker/helm"
+  - name: project-grpc-nodeport
+    version: 1.0.0
+    repository: "oci://us-east1-docker.pkg.dev/unity-solutions-tyndall-prd/docker/helm"
+    condition: infra.project-grpc-nodeport
+  - name: postgres-integration-svc
+    version: 1.0.0
+    repository: "oci://us-east1-docker.pkg.dev/unity-solutions-tyndall-prd/docker/helm"
+    condition: infra.postgres-integration-svc
+  # - name: annotations
+  #   version: 1.0.0
+  #   repository: "oci://us-east1-docker.pkg.dev/unity-solutions-tyndall-prd/docker/helm"
+  - name: links
+    version: 1.0.22
+    repository: "oci://us-east1-docker.pkg.dev/unity-solutions-tyndall-prd/docker/helm"
+  # - name: multiplayer
+  #   version: 1.0.0
+  #   repository: "oci://us-east1-docker.pkg.dev/unity-solutions-tyndall-prd/docker/helm"
+  # - name: voip
+  #   version: 1.0.0
+  #   repository: "oci://us-east1-docker.pkg.dev/unity-solutions-tyndall-prd/docker/helm"
+  - name: commonui
+    version: 1.0.0
+    repository: "oci://us-east1-docker.pkg.dev/unity-solutions-tyndall-prd/docker/helm"
+
+  
+  
+
+  

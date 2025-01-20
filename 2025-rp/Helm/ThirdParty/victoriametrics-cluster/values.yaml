@@ -1,0 +1,72 @@
+vmselect:
+  fullnameOverride: "victoria-metrics-select"
+  nodeSelector: 
+    'cloud.google.com/gke-nodepool': rl-benchmark-victoria-metrics-cluster
+  replicaCount: 1
+  resources:
+    limits:
+      cpu: 15.5
+      memory: 55.0G
+    requests:
+      cpu: 13.5
+      memory: 55.0G
+  serviceMonitor:
+    enabled: true
+    namespaceSelector:
+      matchNames:
+        - reflect-live
+    endpoints:
+      - port: http
+        interval: 5s
+  extraArgs:
+    search.maxConcurrentRequests: 16
+    search.maxQueryDuration: 300s
+    search.maxQueueDuration: 300s
+
+vminsert:
+  fullnameOverride: "victoria-metrics-insert"
+  nodeSelector:
+    'cloud.google.com/gke-nodepool': rl-benchmark-victoria-metrics-cluster
+  replicaCount: 1
+  resources:
+    limits:
+      cpu: 15.5
+      memory: 55.0G
+    requests:
+      cpu: 13.5
+      memory: 55.0G
+  serviceMonitor:
+    enabled: true
+    namespaceSelector:
+      matchNames:
+        - reflect-live
+    endpoints:
+      - port: http
+        interval: 5s
+
+vmstorage:
+  fullnameOverride: "victoria-metrics-storage"
+  nodeSelector: 
+    'cloud.google.com/gke-nodepool': rl-benchmark-vm-cluster-vmstorage
+  replicaCount: 2
+  resources:
+    limits:
+      cpu: 15.5
+      memory: 120.3G
+    requests:
+      cpu: 13.5
+      memory: 120.3G
+  persistentVolume:
+    storageClass: "premium-rwo"
+    mountPath: /data
+    size: 300Gi
+  serviceMonitor:
+      enabled: true
+      namespaceSelector:
+        matchNames:
+          - reflect-live
+      endpoints:
+        - port: http
+          interval: 5s
+  extraArgs:
+    storageDataPath: "/data"

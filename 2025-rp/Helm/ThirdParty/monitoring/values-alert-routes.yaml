@@ -1,0 +1,19 @@
+alertmanager:
+  config:
+    route:
+      routes:
+      - match_re:
+          severity: ^(high|disaster)$
+        receiver: team-reflect
+      - match:
+          alertname: KubeDeploymentReplicasMismatch
+        receiver: team-reflect
+      - match:
+          alertname: KubeHpaMaxedOut
+        receiver: team-reflect
+      - match:
+          alertname: PodFrequentlyRestarting
+        receiver: team-reflect
+      - match:
+          alertname: "Watchdog"  # prometheus-operator self-monitoring
+        receiver: "null"

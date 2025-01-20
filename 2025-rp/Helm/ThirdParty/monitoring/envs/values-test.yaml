@@ -1,0 +1,27 @@
+env: test
+
+grafana:
+  ingress:
+    hosts:
+      - grafana.test.reflect.unity3d.com
+    tls:
+      - secretName: monitoring-tls
+        hosts:
+          - grafana.test.reflect.unity3d.com
+alertmanager: 
+  ingress:
+    hosts:
+      - alertmanager.test.reflect.unity3d.com
+    tls:
+      - secretName: monitoring-tls
+        hosts:
+          - alertmanager.test.reflect.unity3d.com
+prometheus:
+  ingress:
+    enabled: true
+    hosts:
+      - prometheus.test.reflect.unity3d.com
+    tls:
+      - secretName: monitoring-tls
+        hosts:
+          - prometheus.test.reflect.unity3d.com

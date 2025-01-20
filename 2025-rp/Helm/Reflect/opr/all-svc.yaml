@@ -1,0 +1,708 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: opr
+      meta.helm.sh/release-namespace: opr-develop
+    creationTimestamp: "2025-01-18T11:29:44Z"
+    labels:
+      app.kubernetes.io/instance: opr
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: commonui
+      helm.sh/chart: reflect-common-chart-1.0.0
+    name: commonui
+    namespace: opr-develop
+    resourceVersion: "38570777"
+    uid: 3b6a2544-f69f-4961-8eee-3fb9aa5240c0
+  spec:
+    clusterIP: 10.96.74.35
+    clusterIPs:
+    - 10.96.74.35
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: http
+      port: 5000
+      protocol: TCP
+      targetPort: 5000
+    selector:
+      app.kubernetes.io/instance: opr
+      app.kubernetes.io/name: commonui
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: opr
+      meta.helm.sh/release-namespace: opr-develop
+    creationTimestamp: "2025-01-18T11:29:44Z"
+    labels:
+      app.kubernetes.io/instance: opr
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: links
+      helm.sh/chart: reflect-common-chart-1.0.0
+    name: links
+    namespace: opr-develop
+    resourceVersion: "38570791"
+    uid: 56d752ee-f1c2-4e22-a1f6-92c764f3a4c5
+  spec:
+    clusterIP: 10.101.47.101
+    clusterIPs:
+    - 10.101.47.101
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 80
+    selector:
+      app.kubernetes.io/instance: opr
+      app.kubernetes.io/name: links
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: opr
+      meta.helm.sh/release-namespace: opr-develop
+    creationTimestamp: "2025-01-18T11:29:44Z"
+    labels:
+      app.kubernetes.io/component: headless
+      app.kubernetes.io/instance: opr
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: keycloak
+      app.kubernetes.io/version: 21.1.2
+      helm.sh/chart: keycloak-18.4.3
+    name: opr-keycloak-headless
+    namespace: opr-develop
+    resourceVersion: "38570763"
+    uid: c7b02115-84c7-4d5f-8b31-521258369396
+  spec:
+    clusterIP: None
+    clusterIPs:
+    - None
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: http
+    selector:
+      app.kubernetes.io/instance: opr
+      app.kubernetes.io/name: keycloak
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: opr
+      meta.helm.sh/release-namespace: opr-develop
+    creationTimestamp: "2025-01-18T11:29:44Z"
+    labels:
+      app.kubernetes.io/component: http
+      app.kubernetes.io/instance: opr
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: keycloak
+      app.kubernetes.io/version: 21.1.2
+      helm.sh/chart: keycloak-18.4.3
+    name: opr-keycloak-http
+    namespace: opr-develop
+    resourceVersion: "38570815"
+    uid: bc5b4882-98c3-451a-a119-00951702d5b1
+  spec:
+    clusterIP: 10.104.104.20
+    clusterIPs:
+    - 10.104.104.20
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: http
+    - name: https
+      port: 8443
+      protocol: TCP
+      targetPort: https
+    - name: http-management
+      port: 9990
+      protocol: TCP
+      targetPort: http-management
+    selector:
+      app.kubernetes.io/instance: opr
+      app.kubernetes.io/name: keycloak
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: opr
+      meta.helm.sh/release-namespace: opr-develop
+    creationTimestamp: "2025-01-18T11:29:44Z"
+    labels:
+      app.kubernetes.io/component: primary
+      app.kubernetes.io/instance: opr
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: postgresql
+      helm.sh/chart: postgresql-12.8.0
+    name: opr-postgresql
+    namespace: opr-develop
+    resourceVersion: "38570807"
+    uid: aaac2dfd-1f9f-4d8b-8586-2b8bbccbd3c5
+  spec:
+    clusterIP: 10.101.69.163
+    clusterIPs:
+    - 10.101.69.163
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: tcp-postgresql
+      port: 5432
+      protocol: TCP
+      targetPort: tcp-postgresql
+    selector:
+      app.kubernetes.io/component: primary
+      app.kubernetes.io/instance: opr
+      app.kubernetes.io/name: postgresql
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: opr
+      meta.helm.sh/release-namespace: opr-develop
+    creationTimestamp: "2025-01-18T11:29:44Z"
+    labels:
+      app.kubernetes.io/component: primary
+      app.kubernetes.io/instance: opr
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: postgresql
+      helm.sh/chart: postgresql-12.8.0
+      service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+    name: opr-postgresql-hl
+    namespace: opr-develop
+    resourceVersion: "38570768"
+    uid: a6ad0632-0c1d-41e0-86ed-cfa333c89571
+  spec:
+    clusterIP: None
+    clusterIPs:
+    - None
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: tcp-postgresql
+      port: 5432
+      protocol: TCP
+      targetPort: tcp-postgresql
+    publishNotReadyAddresses: true
+    selector:
+      app.kubernetes.io/component: primary
+      app.kubernetes.io/instance: opr
+      app.kubernetes.io/name: postgresql
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: opr
+      meta.helm.sh/release-namespace: opr-develop
+    creationTimestamp: "2025-01-18T11:29:44Z"
+    labels:
+      app.kubernetes.io/instance: opr
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: rabbitmq
+      helm.sh/chart: rabbitmq-12.0.9
+    name: opr-rabbitmq
+    namespace: opr-develop
+    resourceVersion: "38570784"
+    uid: b3a8145d-6eda-4bc3-85ee-ec858b8615bb
+  spec:
+    clusterIP: 10.103.94.248
+    clusterIPs:
+    - 10.103.94.248
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: amqp
+      port: 5672
+      protocol: TCP
+      targetPort: amqp
+    - name: epmd
+      port: 4369
+      protocol: TCP
+      targetPort: epmd
+    - name: dist
+      port: 25672
+      protocol: TCP
+      targetPort: dist
+    - name: http-stats
+      port: 15672
+      protocol: TCP
+      targetPort: stats
+    selector:
+      app.kubernetes.io/instance: opr
+      app.kubernetes.io/name: rabbitmq
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: opr
+      meta.helm.sh/release-namespace: opr-develop
+    creationTimestamp: "2025-01-18T11:29:44Z"
+    labels:
+      app.kubernetes.io/instance: opr
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: rabbitmq
+      helm.sh/chart: rabbitmq-12.0.9
+    name: opr-rabbitmq-headless
+    namespace: opr-develop
+    resourceVersion: "38570765"
+    uid: 2c2a8c35-38a1-4baf-a09d-7428c1f16f0e
+  spec:
+    clusterIP: None
+    clusterIPs:
+    - None
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: epmd
+      port: 4369
+      protocol: TCP
+      targetPort: epmd
+    - name: amqp
+      port: 5672
+      protocol: TCP
+      targetPort: amqp
+    - name: dist
+      port: 25672
+      protocol: TCP
+      targetPort: dist
+    - name: http-stats
+      port: 15672
+      protocol: TCP
+      targetPort: stats
+    publishNotReadyAddresses: true
+    selector:
+      app.kubernetes.io/instance: opr
+      app.kubernetes.io/name: rabbitmq
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: opr
+      meta.helm.sh/release-namespace: opr-develop
+    creationTimestamp: "2025-01-18T11:29:44Z"
+    labels:
+      app.kubernetes.io/component: primary
+      app.kubernetes.io/instance: opr
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: postgresql
+      helm.sh/chart: reflect-common-chart-1.0.0
+    name: postgres-integration-svc
+    namespace: opr-develop
+    resourceVersion: "38570782"
+    uid: f8a8ad14-729f-4ed1-9b36-7da0e2cd4937
+  spec:
+    clusterIP: 10.110.116.76
+    clusterIPs:
+    - 10.110.116.76
+    externalTrafficPolicy: Cluster
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: postrgres-integration-test-svc
+      nodePort: 30432
+      port: 5432
+      protocol: TCP
+      targetPort: 5432
+    selector:
+      app.kubernetes.io/component: primary
+      app.kubernetes.io/instance: opr
+      app.kubernetes.io/name: postgresql
+    sessionAffinity: None
+    type: NodePort
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"labels":{"app.kubernetes.io/instance":"opr","app.kubernetes.io/name":"project"},"name":"project","namespace":"opr-develop"},"spec":{"ports":[{"name":"prom-publisher","port":1234,"protocol":"TCP","targetPort":1234},{"name":"grpc","port":10010,"protocol":"TCP","targetPort":10010},{"name":"grpc-web","port":8080,"protocol":"TCP","targetPort":8080},{"name":"http","port":80,"protocol":"TCP","targetPort":8090},{"name":"grpc-web-admin","port":9901,"protocol":"TCP","targetPort":9901}],"selector":{"app.kubernetes.io/instance":"opr","app.kubernetes.io/name":"project"},"type":"ClusterIP"}}
+    creationTimestamp: "2025-01-18T02:26:07Z"
+    labels:
+      app.kubernetes.io/instance: opr
+      app.kubernetes.io/name: project
+    name: project
+    namespace: opr-develop
+    resourceVersion: "38416037"
+    uid: 5ed45040-d4ba-439e-92d1-f6b719167a84
+  spec:
+    clusterIP: 10.96.52.3
+    clusterIPs:
+    - 10.96.52.3
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: prom-publisher
+      port: 1234
+      protocol: TCP
+      targetPort: 1234
+    - name: grpc
+      port: 10010
+      protocol: TCP
+      targetPort: 10010
+    - name: grpc-web
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 8090
+    - name: grpc-web-admin
+      port: 9901
+      protocol: TCP
+      targetPort: 9901
+    selector:
+      app.kubernetes.io/instance: opr
+      app.kubernetes.io/name: project
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: opr
+      meta.helm.sh/release-namespace: opr-develop
+    creationTimestamp: "2025-01-18T11:29:44Z"
+    labels:
+      app.kubernetes.io/instance: opr
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: project
+      helm.sh/chart: reflect-common-chart-1.0.0
+    name: project-grpc
+    namespace: opr-develop
+    resourceVersion: "38570814"
+    uid: a1476b7c-d72f-4615-b3c9-3db8ccb632f0
+  spec:
+    clusterIP: 10.105.122.137
+    clusterIPs:
+    - 10.105.122.137
+    externalTrafficPolicy: Cluster
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: project-grpc
+      nodePort: 30010
+      port: 10010
+      protocol: TCP
+      targetPort: 10010
+    selector:
+      app.kubernetes.io/instance: opr
+      app.kubernetes.io/name: project
+    sessionAffinity: None
+    type: NodePort
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: opr
+      meta.helm.sh/release-namespace: opr-develop
+    creationTimestamp: "2025-01-18T11:29:44Z"
+    labels:
+      app.kubernetes.io/instance: opr
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: sync-api
+      helm.sh/chart: reflect-common-chart-1.0.0
+    name: sync-api
+    namespace: opr-develop
+    resourceVersion: "38570821"
+    uid: 0c306c37-1592-4d13-8d55-9d71fdf303c3
+  spec:
+    clusterIP: 10.104.255.77
+    clusterIPs:
+    - 10.104.255.77
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: prom-publisher
+      port: 1234
+      protocol: TCP
+      targetPort: 1234
+    - name: grpc
+      port: 10011
+      protocol: TCP
+      targetPort: 10011
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 80
+    selector:
+      app.kubernetes.io/instance: opr
+      app.kubernetes.io/name: sync-api
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: opr
+      meta.helm.sh/release-namespace: opr-develop
+    creationTimestamp: "2025-01-18T11:29:44Z"
+    labels:
+      app.kubernetes.io/instance: opr
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: sync-decimator
+      helm.sh/chart: reflect-common-chart-1.0.0
+    name: sync-decimator
+    namespace: opr-develop
+    resourceVersion: "38570803"
+    uid: d321a625-f5e4-4ef7-9c60-0c94a2b8cf79
+  spec:
+    clusterIP: 10.101.13.170
+    clusterIPs:
+    - 10.101.13.170
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: prom-publisher
+      port: 1234
+      protocol: TCP
+      targetPort: 1234
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 80
+    selector:
+      app.kubernetes.io/instance: opr
+      app.kubernetes.io/name: sync-decimator
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: opr
+      meta.helm.sh/release-namespace: opr-develop
+    creationTimestamp: "2025-01-18T11:29:44Z"
+    labels:
+      app.kubernetes.io/instance: opr
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: sync-hlodbuilder
+      helm.sh/chart: reflect-common-chart-1.0.0
+    name: sync-hlodbuilder
+    namespace: opr-develop
+    resourceVersion: "38570795"
+    uid: 6e255032-ed08-4456-8592-1efbe83c8042
+  spec:
+    clusterIP: 10.100.28.144
+    clusterIPs:
+    - 10.100.28.144
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: prom-publisher
+      port: 1234
+      protocol: TCP
+      targetPort: 1234
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 80
+    selector:
+      app.kubernetes.io/instance: opr
+      app.kubernetes.io/name: sync-hlodbuilder
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: opr
+      meta.helm.sh/release-namespace: opr-develop
+    creationTimestamp: "2025-01-18T11:29:44Z"
+    labels:
+      app.kubernetes.io/instance: opr
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: sync-modelprocessor
+      helm.sh/chart: reflect-common-chart-1.0.0
+    name: sync-modelprocessor
+    namespace: opr-develop
+    resourceVersion: "38570822"
+    uid: 2442cefa-c79e-49a1-9c37-c05dafcd3a76
+  spec:
+    clusterIP: 10.97.254.132
+    clusterIPs:
+    - 10.97.254.132
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: prom-publisher
+      port: 1234
+      protocol: TCP
+      targetPort: 1234
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 80
+    selector:
+      app.kubernetes.io/instance: opr
+      app.kubernetes.io/name: sync-modelprocessor
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: opr
+      meta.helm.sh/release-namespace: opr-develop
+    creationTimestamp: "2025-01-18T11:29:44Z"
+    labels:
+      app.kubernetes.io/instance: opr
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: sync-modelprocessor-safemode
+      helm.sh/chart: reflect-common-chart-1.0.0
+    name: sync-modelprocessor-safemode
+    namespace: opr-develop
+    resourceVersion: "38570799"
+    uid: 9ab74358-8160-4f2b-8638-160928b12f39
+  spec:
+    clusterIP: 10.106.179.152
+    clusterIPs:
+    - 10.106.179.152
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: prom-publisher
+      port: 1234
+      protocol: TCP
+      targetPort: 1234
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 80
+    selector:
+      app.kubernetes.io/instance: opr
+      app.kubernetes.io/name: sync-modelprocessor-safemode
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: opr
+      meta.helm.sh/release-namespace: opr-develop
+    creationTimestamp: "2025-01-18T11:29:44Z"
+    labels:
+      app.kubernetes.io/instance: opr
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: sync-worker
+      helm.sh/chart: reflect-common-chart-1.0.0
+    name: sync-worker
+    namespace: opr-develop
+    resourceVersion: "38570767"
+    uid: d259ec20-6686-49b3-a8a5-4789061d5ce6
+  spec:
+    clusterIP: 10.105.66.21
+    clusterIPs:
+    - 10.105.66.21
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: prom-publisher
+      port: 1234
+      protocol: TCP
+      targetPort: 1234
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 80
+    selector:
+      app.kubernetes.io/instance: opr
+      app.kubernetes.io/name: sync-worker
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+kind: List
+metadata:
+  resourceVersion: ""

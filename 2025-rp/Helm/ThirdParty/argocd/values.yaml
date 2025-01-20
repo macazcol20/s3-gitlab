@@ -1,0 +1,71 @@
+global:
+  image:
+    repository: gcr.io/unity-vert-reflect-prd/reflect-argo
+    tag: v2.2.0-rc1
+
+repoServer:
+  env:
+    - name: GOOGLE_APPLICATION_CREDENTIALS
+      value: /secrets/storage/credentials.json
+  envFrom:
+    - secretRef:
+        name: storage
+  volumeMounts:
+    - name: storage-credentials
+      mountPath: /secrets/storage
+  volumes:
+    - name: storage-credentials
+      secret:
+        defaultMode: 420
+        secretName: storage
+
+configs:
+  repositories:
+    reflect-helm:
+      enableOCI: 'true'
+      name: reflect-helm
+      type: helm
+      url: us-central1-docker.pkg.dev/unity-vert-reflect-test/reflect-helm
+      username: oauth2accesstoken
+server:
+  ingress:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: "nginx"
+      nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+  ingressGrpc:
+    enabled: true
+  extraArgs:
+    - --insecure
+  additionalProjects:
+  - name: reflect
+    description: Reflect
+    clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
+    destinations:
+    - namespace: '*'
+      server: '*'
+    sourceRepos:
+    - '*'
+  - name: forma
+    description: Forma
+    clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
+    destinations:
+    - namespace: '*'
+      server: '*'
+    sourceRepos:
+    - '*'
+
+  GKEbackendConfig:
+    enabled: true
+    spec:
+      securityPolicy:
+        name: unity-internal
+
+  service:
+    annotations:
+      cloud.google.com/backend-config: '{"default": "argo-argocd-server"}'

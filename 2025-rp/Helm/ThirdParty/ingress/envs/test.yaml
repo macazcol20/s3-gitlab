@@ -1,0 +1,34 @@
+certManager:
+  issuer:
+    acmeEmail: reflect-cloud+test@unity3d.com
+    cloudDNSProject: unity-vert-reflect-test
+    preferredChain: "ISRG Root X1"
+  certificates:
+    reflect-tls:
+      namespace: default
+      dnsNames:
+        - test.reflect.unity3d.com
+        - p.test.reflect.unity3d.com
+        - web.p.test.reflect.unity3d.com
+        - canary.p.test.reflect.unity3d.com
+        - s.test.reflect.unity3d.com
+        - web.a.test.reflect.unity3d.com
+        - web.b.test.reflect.unity3d.com
+        - dashboard.test.reflect.unity3d.com
+        - m.test.reflect.unity3d.com
+        - downloads.test.reflect.unity3d.com
+    monitoring-tls:
+      namespace: monitoring
+      dnsNames:
+        - grafana.test.reflect.unity3d.com
+        - alertmanager.test.reflect.unity3d.com
+        - prometheus.test.reflect.unity3d.com
+    argo-tls:
+      namespace: argocd
+      dnsNames:
+        - argocd.test.reflect.unity3d.com
+        - argocd.grpc.test.reflect.unity3d.com
+    forma-tls:
+      namespace: forma
+      dnsNames:
+        - api.test.forma.unity.com
