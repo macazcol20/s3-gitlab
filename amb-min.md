@@ -197,3 +197,35 @@ mc rm --recursive --force myminio/sync-service-dev/*.log
 mc rb --force myminio/sync-service-dev
 ```
 
+
+```sh
+## if no access, deploy a minio pod for cli
+- Deploy a Permanent Pod (Reusable)
+
+```sh
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: Pod
+metadata:
+  name: minio-client
+  namespace: minio
+spec:
+  containers:
+  - name: minio-client
+    image: minio/mc
+    command: ["/bin/sh", "-c", "while true; do sleep 3600; done"]
+EOF
+
+```
+
+```sh
+kubectl exec -it minio-client -n minio -- /bin/sh
+```
+
+```sh
+mc alias set myminio http://minio-minio-instance-hl.minio.svc.cluster.local:9000 minio minio123
+```
+
+```sh
+mc mb myminio/collins-opr-dev
+```
